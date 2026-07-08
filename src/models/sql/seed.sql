@@ -17,7 +17,7 @@ DROP TABLE IF EXISTS roles CASCADE;
 -- Create categories (of vehicles) table
 CREATE TABLE categories (
     category_id INTEGER PRIMARY KEY,
-    name VARCHAR(200) UNIQUE NOT NULL,
+    slug VARCHAR(200) UNIQUE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -52,22 +52,23 @@ CREATE TABLE vehicle_images (
 );
 
 -- Insert categories
-INSERT INTO categories (category_id, name) VALUES
-    (1, 'Sedan'),
-    (2, 'SUV'),
-    (3, 'Truck'),
-    (4, 'Van'),
-    (5, 'Coupe'),
-    (6, 'Convertible'),
-    (7, 'Hatchback'),
-    (8, 'Wagon'),
-    (9, 'Crossover'),
-    (10, 'Minivan'),
-    (11, 'Electric'),
-    (12, 'Hybrid'),
-    (13, 'Luxury'),
-    (14, 'Sports Car'),
-    (15, 'Commercial');
+INSERT INTO categories (category_id, slug) VALUES
+    (1, 'sedan'),
+    (2, 'suv'),
+    (3, 'truck'),
+    (4, 'van'),
+    (5, 'coupe'),
+    (6, 'convertible'),
+    (7, 'hatchback'),
+    (8, 'wagon'),
+    (9, 'crossover'),
+    (10, 'minivan'),
+    (11, 'electric'),
+    (12, 'hybrid'),
+    (13, 'luxury'),
+    (14, 'sports-car'),
+    (15, 'commercial')
+    ON CONFLICT (slug) DO NOTHING;;
 
 INSERT INTO vehicles (
     category_id,
@@ -263,7 +264,8 @@ INSERT INTO vehicles (
     'FAKECAR0000000012',
     'Efficient hybrid hatchback with excellent fuel economy, modern styling, and practical daily usability.',
     'available'
-);
+)\
+ON CONFLICT (name) DO NOTHING;
 
 -- Contact form table
 CREATE TABLE IF NOT EXISTS contact_messages (

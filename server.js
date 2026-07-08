@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 
 // Import MVC components
 import routes from './src/controllers/routes.js';
-// import { addLocalVariables } from './src/middleware/global.js';
+import { addLocalVariables } from './src/middleware/global.js';
 import { setupDatabase, testConnection } from './src/models/setup.js';
 
 import session from 'express-session';
@@ -70,7 +70,7 @@ app.set('views', path.join(__dirname, 'src/views'));
 /**
  * Global Middleware
  */
-// app.use(addLocalVariables);
+app.use(addLocalVariables);
 // Flash message middleware (must come after session and global middleware)
 app.use(flash);
 /**

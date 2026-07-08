@@ -52,20 +52,18 @@ const setHeadAssetsFunctionality = (req, res) => {
  */
 const addLocalVariables = (req, res, next) => {
     // Set current year for use in templates
-    // res.locals.currentYear = new Date().getFullYear();
+    res.locals.currentYear = new Date().getFullYear();
 
-    // // Make NODE_ENV available to all templates
-    // res.locals.NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
+    // Make NODE_ENV available to all templates
+    res.locals.NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
 
-    // // Make req.query available to all templates
-    // res.locals.queryParams = { ...req.query };
+    // Make req.query available to all templates
+    res.locals.queryParams = { ...req.query };
 
-    // // Set greeting based on time of day
-
-    // // Randomly assign a theme class to the body
-    // const themes = ['blue-theme', 'green-theme', 'red-theme'];
-    // const randomTheme = themes[Math.floor(Math.random() * themes.length)];
-    // res.locals.bodyClass = randomTheme;
+    // Randomly assign a theme class to the body
+    const themes = ['blue-theme', 'green-theme', 'red-theme'];
+    const randomTheme = themes[Math.floor(Math.random() * themes.length)];
+    res.locals.bodyClass = randomTheme;
 
     setHeadAssetsFunctionality(req, res);
 

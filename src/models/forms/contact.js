@@ -24,7 +24,7 @@ const createContactForm = async (subject, message) => {
  */
 const getAllContactForms = async () => {
     const query = `
-        SELECT id, subject, message, submitted
+        SELECT contact_message_id, subject, message, submitted
         FROM contact_messages
         ORDER BY submitted DESC
     `;
