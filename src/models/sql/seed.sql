@@ -17,7 +17,7 @@ DROP TABLE IF EXISTS roles CASCADE;
 -- Create categories (of vehicles) table
 CREATE TABLE categories (
     category_id INTEGER PRIMARY KEY,
-    slug VARCHAR(200) UNIQUE NOT NULL,
+    name VARCHAR(200) UNIQUE NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -52,7 +52,7 @@ CREATE TABLE vehicle_images (
 );
 
 -- Insert categories
-INSERT INTO categories (category_id, slug) VALUES
+INSERT INTO categories (category_id, name) VALUES
     (1, 'sedan'),
     (2, 'suv'),
     (3, 'truck'),

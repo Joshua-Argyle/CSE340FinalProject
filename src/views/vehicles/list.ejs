@@ -1,0 +1,52 @@
+<%- include('../partials/header') %>
+<main class="catalog-page">
+    <section class="catalog-hero">
+        <div class="catalog-hero__content">
+            <h1>Vehicle Catalog</h1>
+            <p>Browse our available vehicles and find the right fit for your needs.</p>
+        </div>
+    </section>
+
+    <section class="catalog-controls">
+        <div class="catalog-controls__info">
+            <p>Showing <strong><%= vehicles.length %></strong> vehicles</p>
+        </div>
+        <div class="catalog-controls__sort">
+            <label for="sort">Sort by</label>
+            <select id="sort" name="sort" onchange="location.href = '?sort=' + this.value">
+                <option value="category" <%= currentSort === 'category' ? 'selected' : '' %>>Category</option>
+                <option value="make" <%= currentSort === 'make' ? 'selected' : '' %>>Make</option>
+                <option value="model" <%= currentSort === 'model' ? 'selected' : '' %>>Model</option>
+                <option value="year" <%= currentSort === 'year' ? 'selected' : '' %>>Year</option>
+            </select>
+        </div>
+    </section>
+
+    <section class="vehicle-grid">
+        <% if (vehicles && vehicles.length > 0) { %>
+            <% vehicles.forEach(vehicle => { %>
+                <article class="vehicle-card">
+                    <div class="vehicle-card__header">
+                        <h2><%= vehicle.make %> <%= vehicle.model %></h2>
+                        <span class="vehicle-card__year"><%= vehicle.year %></span>
+                    </div>
+                    <div class="vehicle-card__body">
+                        <p class="vehicle-card__category"><%= vehicle.categoryName %></p>
+                        <p class="vehicle-card__price">$<%= Number(vehicle.price).toLocaleString() %></p>
+                        <p class="vehicle-card__meta">
+                            <%= vehicle.mileage %> miles • <%= vehicle.transmission %> • <%= vehicle.fuelType %>
+                        </p>
+                    </div>
+                    <div class="vehicle-card__footer">
+                        <a href="/catalog/<%= vehicle.vin %>" class="vehicle-card__link">View Details</a>
+                    </div>
+                </article>
+            <% }); %>
+        <% } else { %>
+            <div class="empty-state">
+                <p>No vehicles are available right now.</p>
+            </div>
+        <% } %>
+    </section>
+</main>
+<%- include('../partials/footer') %>

@@ -1,5 +1,5 @@
 {
-    "name": "cse340-practice-[lastname]",
+    "name": "cse340-final-Argyle",
     "dependencies": {
         "bcrypt": "^6.0.0",
         "connect-pg-simple": "^10.0.0",

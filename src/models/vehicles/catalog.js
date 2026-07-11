@@ -1,17 +1,14 @@
 import db from '../db.js';
 
 /**
- * Core function that gets all sections (course offerings) for a specific course.
- * Works with either course ID or slug - this pattern reduces code duplication.
+ * Get vehicles in a specific category.
  * 
- * @param {string|number} identifier - Vehicle ID or slug
- * @param {string} identifierType - 'id' or 'slug' (default: 'slug')
+ * @param {string|number} identifier - Category ID or category name
+ * @param {string} identifierType - 'id' or 'name' (default: 'name')
  * @param {string} sortBy - Sort option: 'make', 'model', or 'year' (default: 'make')
  * @returns {Promise<Array>} Array of vehicle objects with category info
  */
-const getVehiclesByCategory = async (identifier, identifierType = 'slug', sortBy = 'make') => {
-    // Build WHERE clause dynamically based on whether we're searching by ID or slug
-    // Using $1 prevents SQL injection - never concatenate user input into SQL!
+const getVehiclesByCategory = async (identifier, identifierType = 'name', sortBy = 'make') => {
     const whereClause = identifierType === 'id' ? 'categories.category_id = $1' : 'categories.name = $1';
     
     /**
@@ -43,6 +40,7 @@ const getVehiclesByCategory = async (identifier, identifierType = 'slug', sortBy
      * This is a common pattern when working with databases in JavaScript.
      */
     return result.rows.map(car => ({
+        vehicleId: car.vehicle_id,
         make: car.make,
         model: car.model,
         year: car.year,
@@ -51,17 +49,15 @@ const getVehiclesByCategory = async (identifier, identifierType = 'slug', sortBy
 };
 
 /**
- * Wrapper functions maintain backward compatibility with existing code.
- * These let us keep the same API while using consolidated core functions internally.
- * Example: getSectionsByCourseId(5) calls getSectionsByCourse(5, 'id')
+ * Wrapper helpers for the catalog query.
  */
 const getVehiclesByCategoryId = (categoryId, sortBy = 'make') => 
     getVehiclesByCategory(categoryId, 'id', sortBy);
 
-const getVehiclesByCategorySlug = (categorySlug, sortBy = 'make') => 
-    getVehiclesByCategory(categorySlug, 'slug', sortBy);
+const getVehiclesByCategoryName = (categoryName, sortBy = 'make') => 
+    getVehiclesByCategory(categoryName, 'name', sortBy);
 
 export { 
     getVehiclesByCategoryId,
-    getVehiclesByCategorySlug
+    getVehiclesByCategoryName
 };

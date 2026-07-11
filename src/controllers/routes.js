@@ -1,4 +1,5 @@
 import { homePage, aboutPage, testErrorPage } from './index.js';
+import { catalogPage, vehicleDetailPage } from './vehicles/vehicles.js';
 import { handleContactSubmission, showContactForm, showContactResponses } from './forms/contact.js';
 import { processEditAccount, processRegistration } from './forms/registration.js';
 import registrationRoutes from './forms/registration.js';
@@ -15,21 +16,12 @@ import {
 
 // Create a new router instance
 const router = Router();
-// // Add catalog-specific styles to all catalog routes
-// router.use('/catalog', (req, res, next) => {
-//     res.addStyle('<link rel="stylesheet" href="/css/catalog.css">');
-//     next();
-// });
-// // Add faculty-specific styles to all faculty routes
-// router.use('/faculty', (req, res, next) => {
-//     res.addStyle('<link rel="stylesheet" href="/css/faculty.css">');
-//     next();
-// });
 
-// router.use('/faculty/:slugId', (req, res, next) => {
-//     res.addStyle('<link rel="stylesheet" href="/css/faculty.css">');
-//     next();
-// });
+// Add vehicle-specific styles to all vehicle routes
+router.use('/catalog', (req, res, next) => {
+    res.addStyle('<link rel="stylesheet" href="/css/vehicles/catalog.css">');
+    next();
+});
 
 // Add contact-specific styles to all contact routes
 router.use('/contact', (req, res, next) => {
@@ -59,13 +51,9 @@ router.get('/dashboard', requireLogin, showDashboard);
 router.get('/', homePage);
 router.get('/about', aboutPage);
 
-// Course catalog routes
-// router.get('/catalog', catalogPage);
-// router.get('/catalog/:slugId', courseDetailPage);
-
-// Faculty routes
-// router.get('/faculty', facultyListPage);
-// router.get('/faculty/:slugId', facultyDetailPage);
+//Vehicle catalog routes
+router.get('/catalog', catalogPage);
+router.get('/catalog/:vehicleId', vehicleDetailPage);
 
 // Route to trigger a test error
 router.get('/test-error', testErrorPage);
