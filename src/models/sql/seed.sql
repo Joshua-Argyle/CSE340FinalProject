@@ -6,6 +6,7 @@ BEGIN;
 -- Drop existing tables (in reverse dependency order)
 
 DROP TABLE IF EXISTS service_requests CASCADE;
+DROP TABLE IF EXISTS customer_vehicles CASCADE;
 DROP TABLE IF EXISTS reviews CASCADE;
 DROP TABLE IF EXISTS vehicle_images CASCADE;
 DROP TABLE IF EXISTS vehicles CASCADE;
@@ -350,11 +351,26 @@ CREATE TABLE reviews(
 
 );
 
+CREATE TABLE customer_vehicles (
+    customer_vehicle_id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL
+        REFERENCES users(user_id)
+        ON DELETE CASCADE,
+    vin VARCHAR(17) UNIQUE,
+    make VARCHAR(100) NOT NULL,
+    model VARCHAR(100) NOT NULL,
+    year INT NOT NULL
+);
+
 CREATE TABLE service_requests (
     service_request_id SERIAL PRIMARY KEY,
-    user_id INT NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-    vehicle_id INT REFERENCES vehicles(vehicle_id) ON DELETE SET NULL,
-    subject VARCHAR(255) NOT NULL,
+    user_id INT NOT NULL
+        REFERENCES users(user_id)
+        ON DELETE CASCADE,
+    customer_vehicle_id INT
+        REFERENCES customer_vehicles(customer_vehicle_id)
+        ON DELETE SET NULL,
+    service_type VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
     status VARCHAR(50) DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
