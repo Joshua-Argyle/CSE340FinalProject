@@ -20,6 +20,45 @@
                 <li><strong>Fuel Type:</strong> <%= vehicle.fuelType %></li>
             </ul>
         </div>
+        <section class="reviews-section">
+            <h2>Customer Reviews</h2>
+
+            <% if (reviews && reviews.length > 0) { %>
+                <ul class="review-list">
+                    <% reviews.forEach(review => { %>
+                        <li class="review-item">
+                            <div class="review-header">
+                                <strong><%= review.name %></strong>
+                                <span><%= review.rating %>/5</span>
+                            </div>
+                            <p class="review-date"><%= new Date(review.created_at).toLocaleDateString() %></p>
+                            <p><%= review.review_text %></p>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <p>No reviews yet for this vehicle.</p>
+            <% } %>
+
+            <form action="/catalog/<%= vehicle.vehicleId %>/reviews" method="post" class="review-form">
+                <h3>Leave a Review</h3>
+                <label for="rating">Rating</label>
+                <select id="rating" name="rating" required>
+                    <option value="">Select a rating</option>
+                    <option value="5">5 - Excellent</option>
+                    <option value="4">4 - Very Good</option>
+                    <option value="3">3 - Good</option>
+                    <option value="2">2 - Fair</option>
+                    <option value="1">1 - Poor</option>
+                </select>
+
+                <label for="reviewText">Your Review</label>
+                <textarea id="reviewText" name="reviewText" rows="4" required></textarea>
+
+                <button type="submit">Submit Review</button>
+            </form>
+        </section>
+
         <div class="navigation">
             <p><a href="/catalog">&larr; Back to Vehicle Catalog</a></p>
         </div>

@@ -1,5 +1,6 @@
 import { homePage, aboutPage, testErrorPage } from './index.js';
 import { catalogPage, vehicleDetailPage } from './vehicles/vehicles.js';
+import { handleReviewSubmission, showReviews } from './forms/review.js';
 import { showServiceRequestForm, showServiceRequestResponses, handleServiceRequestSubmission} from './forms/service-request.js'
 import { handleContactSubmission, showContactForm, showContactResponses } from './forms/contact.js';
 import { processEditAccount, processRegistration } from './forms/registration.js';
@@ -13,7 +14,8 @@ import {
     registrationValidation, 
     loginValidation,
     updateAccountValidation,
-    serviceRequestValidation
+    serviceRequestValidation,
+    reviewValidation
 } from '../middleware/validation/form.js';
 
 // Create a new router instance
@@ -61,7 +63,8 @@ router.get('/about', aboutPage);
 
 //Vehicle catalog routes
 router.get('/catalog', catalogPage);
-router.get('/catalog/:vehicleId', vehicleDetailPage);
+router.get('/catalog/:vehicleId', vehicleDetailPage, showReviews);
+router.post('/catalog/:vehicleId/reviews', requireLogin, reviewValidation, handleReviewSubmission);
 
 // Route to trigger a test error
 router.get('/test-error', testErrorPage);

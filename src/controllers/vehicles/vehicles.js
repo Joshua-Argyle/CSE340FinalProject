@@ -26,10 +26,10 @@ const vehicleDetailPage = async (req, res, next) => {
         return next(err);
     }
 
-    res.render('vehicles/detail', {
-        title: `${vehicle.make} ${vehicle.model}`,
-        vehicle,
-    });
+    req.vehicle = vehicle;
+    res.locals.vehicle = vehicle;
+    res.locals.title = `${vehicle.make} ${vehicle.model}`;
+    return next();
 };
 
 export { catalogPage, vehicleDetailPage };

@@ -7,8 +7,8 @@ import db from '../db.js';
  * @param {int} year - The manufacturing year of the car
  * @param {string} make - The make of the car
  * @param {string} model - The model of the car
- * @param {string} ServiceType- The service needed on the car
- * @param {string} Description- Description of car problems if any and service needed on it.
+ * @param {string} serviceType- The service needed on the car
+ * @param {string} description- Description of car problems if any and service needed on it.
  * @returns {Promise<Object>} The newly created contact form record
  */
 

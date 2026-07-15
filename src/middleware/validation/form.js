@@ -109,8 +109,7 @@ const contactValidation = [
 const serviceRequestValidation = [
         body("vin")
             .trim()
-            .notEmpty()
-            .withMessage("VIN is required.")
+            .optional({ values: "falsy" })
             .isLength({ min: 17, max: 17 })
             .withMessage("VIN must be exactly 17 characters.")
             .matches(/^[A-HJ-NPR-Z0-9]{17}$/i)
@@ -164,10 +163,33 @@ const serviceRequestValidation = [
                 }),
     ];
 
-    export { 
+const reviewValidation = [
+    body('rating')
+        .notEmpty()
+        .withMessage('Please select a rating')
+        .isInt({ min: 1, max: 5 })
+        .withMessage('Rating must be between 1 and 5'),
+    body('reviewText')
+        .trim()
+        .notEmpty()
+        .withMessage('Please enter your review')
+        .isLength({ min: 10, max: 2000 })
+        .withMessage('Review must be between 10 and 2000 characters')
+        .custom((value) => {
+            const words = value.split(/\s+/);
+            const uniqueWords = new Set(words);
+            if (words.length > 20 && uniqueWords.size / words.length < 0.3) {
+                throw new Error('Review appears to be spam');
+            }
+            return true;
+        })
+];
+
+export { 
     contactValidation, 
     registrationValidation, 
     loginValidation,
     updateAccountValidation,
-    serviceRequestValidation
+    serviceRequestValidation,
+    reviewValidation
 };
