@@ -29,7 +29,8 @@ export const handleServiceRequestSubmission = async (req, res) => {
     }
 
     // Extract validated data
-    const { userId, vin, make, model, year, serviceType, description } = req.body;
+    const {vin, make, model, year, serviceType, description } = req.body;
+    const userId = req.session.user.user_id;
 
     try {
         // Save to database
@@ -38,9 +39,10 @@ export const handleServiceRequestSubmission = async (req, res) => {
         req.flash('success', 'Thank you for choosing us to service your vehicle! We will respond soon.');
         res.redirect('/service-request');
     } catch (error) {
-    console.error('Error saving service request form:', error);
-    req.flash('error', 'Unable to submit your service request. Please try again later.');
-    res.redirect('/service-request');
+        console.error('Error saving service request form:', error.message);
+        console.error(error.stack);
+        req.flash('error', 'Unable to submit your service request. Please try again later.');
+        res.redirect('/service-request');
     }
 };
 
@@ -53,10 +55,10 @@ export const showServiceRequestResponses = async (req, res) => {
     try {
         serviceRequestForms = await getAllServiceRequests();
     } catch (error) {
-        console.error('Error retrieving contact forms:', error);
+        console.error('Error retrieving service request forms:', error);
     }
 
-    res.render('forms/contact/responses', {
+    res.render('forms/service-request/responses', {
         title: 'Service Request Form Submissions',
         serviceRequestForms
     });

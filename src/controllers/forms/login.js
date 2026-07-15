@@ -28,9 +28,9 @@ export const processLogin = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // TODO: Find user by email using findUserByEmail()
+        //Find user by email using findUserByEmail()
         const user = await findUserByEmail(email);
-        // TODO: If not found, log "User not found" and redirect to /login
+        // If not found, log "User not found" and redirect to /login
         if (!user) {
             console.error('User not found');
             req.flash('error', 'Invalid email or password')

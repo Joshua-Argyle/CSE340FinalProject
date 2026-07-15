@@ -29,10 +29,10 @@ const setupDatabase = async () => {
         hasData = false;
     }
     
-    if (hasData) {
-        console.log('Database already seeded');
-        return true;
-    }
+    // if (hasData) {
+    //     console.log('Database already seeded');
+    //     return true;
+    // }
     
     // No faculty found - run full seed
     console.log('Seeding database...');

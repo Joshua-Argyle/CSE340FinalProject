@@ -1,0 +1,27 @@
+<%- include('../../partials/header') %>
+<main>
+    <h1>Service Requests</h1>
+
+    <% if (serviceRequestForms && serviceRequestForms.length > 0) { %>
+        <div class="service-request-responses">
+            <% serviceRequestForms.forEach(form => { %>
+                <div class="response-item">
+                    <h2>Request #<%= form.service_request_id %></h2>
+                    <p><strong>Customer:</strong> <%= form.customerName %> (<%= form.customerEmail %>)</p>
+                    <p><strong>VIN:</strong> <%= form.vin %></p>
+                    <p><strong>Make:</strong> <%= form.make %></p>
+                    <p><strong>Model:</strong> <%= form.model %></p>
+                    <p><strong>Year:</strong> <%= form.year %></p>
+                    <p><strong>Service Type:</strong> <%= form.service_type %></p>
+                    <p><strong>Description:</strong></p>
+                    <p class="response-description"><%= form.description %></p>
+                    <p><strong>Status:</strong> <%= form.status %></p>
+                    <p class="response-date">Submitted: <%= new Date(form.created_at).toLocaleDateString() %></p>
+                </div>
+            <% }); %>
+        </div>
+    <% } else { %>
+        <p class="no-responses">No service request submissions yet.</p>
+    <% } %>
+</main>
+<%- include('../../partials/footer') %>

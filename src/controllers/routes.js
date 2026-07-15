@@ -1,5 +1,6 @@
 import { homePage, aboutPage, testErrorPage } from './index.js';
 import { catalogPage, vehicleDetailPage } from './vehicles/vehicles.js';
+import { showServiceRequestForm, showServiceRequestResponses, handleServiceRequestSubmission} from './forms/service-request.js'
 import { handleContactSubmission, showContactForm, showContactResponses } from './forms/contact.js';
 import { processEditAccount, processRegistration } from './forms/registration.js';
 import registrationRoutes from './forms/registration.js';
@@ -11,7 +12,8 @@ import {
     contactValidation, 
     registrationValidation, 
     loginValidation,
-    updateAccountValidation
+    updateAccountValidation,
+    serviceRequestValidation
 } from '../middleware/validation/form.js';
 
 // Create a new router instance
@@ -41,6 +43,12 @@ router.use('/login', (req, res, next) => {
     next();
 });
 
+// Add service request-specific styles to all service request routes
+router.use('/service-request', (req, res, next) => {
+    res.addStyle('<link rel="stylesheet" href="/css/service-request.css">');
+    next();
+});
+
 router.use('/register', registrationRoutes);
 
 // Authentication-related routes at root level
@@ -62,11 +70,15 @@ router.get('/contact', showContactForm);
 router.get('/contact/responses', showContactResponses);
 router.post('/contact', contactValidation, handleContactSubmission);
 
+router.get('/service-request', showServiceRequestForm);
+router.get('/service-request/responses', requireLogin, showServiceRequestResponses);
+router.post('/service-request', requireLogin, serviceRequestValidation, handleServiceRequestSubmission);
+
 router.get('/login', showLoginForm);
 router.post('/login', loginValidation, processLogin);
 
 
 router.post('/register', registrationValidation, processRegistration);
-router.post('/register/:id/edit', updateAccountValidation, processEditAccount, requireLogin);
+router.post('/register/:id/edit', requireLogin, updateAccountValidation, processEditAccount);
 
 export default router;

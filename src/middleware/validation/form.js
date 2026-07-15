@@ -102,9 +102,72 @@ const contactValidation = [
             })
     ]
 
+/**
+ * POST /contact - Handle contact form submission with validation
+ */
+//vin, make, model, year, serviceType, description
+const serviceRequestValidation = [
+        body("vin")
+            .trim()
+            .notEmpty()
+            .withMessage("VIN is required.")
+            .isLength({ min: 17, max: 17 })
+            .withMessage("VIN must be exactly 17 characters.")
+            .matches(/^[A-HJ-NPR-Z0-9]{17}$/i)
+            .withMessage(
+                "VIN may contain only valid letters and numbers. I, O, and Q are not allowed."
+            )
+            .toUpperCase(),
+        body("make")
+            .trim()
+            .notEmpty()
+            .withMessage("Vehicle make is required.")
+            .isLength({ max: 100 })
+            .withMessage("Vehicle make cannot exceed 100 characters."),
+        body("model")
+            .trim()
+            .notEmpty()
+            .withMessage("Vehicle model is required.")
+            .isLength({ max: 100 })
+            .withMessage("Vehicle model cannot exceed 100 characters."),
+        body("year")
+            .notEmpty()
+            .withMessage("Vehicle year is required.")
+            .isInt({
+                min: 1885,
+                max: new Date().getFullYear() + 1
+            })
+            .withMessage("Enter a valid vehicle year.")
+            .toInt(),
+        body("serviceType")
+            .trim()
+            .notEmpty()
+            .withMessage("Service type is required.")
+            .isLength({ max: 255 })
+            .withMessage("Service type cannot exceed 255 characters."),
+        body("description")
+            .trim()
+            .notEmpty()
+            .withMessage("Please describe the service your vehicle needs.")
+            .isLength({ min: 10, max: 2000 })
+            .withMessage(
+                "Description must be between 10 and 2,000 characters."
+            )
+            .custom((value) => {
+                // Check for spam patterns (excessive repetition)
+                const words = value.split(/\s+/);
+                const uniqueWords = new Set(words);
+                if (words.length > 20 && uniqueWords.size / words.length < 0.3) {
+                    throw new Error('Message appears to be spam');
+                }
+                return true;
+                }),
+    ];
+
     export { 
     contactValidation, 
     registrationValidation, 
     loginValidation,
-    updateAccountValidation
+    updateAccountValidation,
+    serviceRequestValidation
 };

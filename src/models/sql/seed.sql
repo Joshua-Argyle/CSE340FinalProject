@@ -69,7 +69,7 @@ INSERT INTO categories (category_id, name) VALUES
     (13, 'luxury'),
     (14, 'sports-car'),
     (15, 'commercial')
-    ON CONFLICT (slug) DO NOTHING;;
+ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO vehicles (
     category_id,
@@ -265,8 +265,7 @@ INSERT INTO vehicles (
     'FAKECAR0000000012',
     'Efficient hybrid hatchback with excellent fuel economy, modern styling, and practical daily usability.',
     'available'
-)\
-ON CONFLICT (name) DO NOTHING;
+);
 
 -- Contact form table
 CREATE TABLE IF NOT EXISTS contact_messages (
