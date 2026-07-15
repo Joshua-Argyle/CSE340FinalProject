@@ -1,31 +1,17 @@
 import db from '../db.js';
 
 /**
- * Get all vehicles from the database with optional sorting.
- * 
- * @param {string} sortBy - Sort option: 'category' (default), 'make', 'model', 'year'
+ * Get all vehicles from the database.
+ *
  * @returns {Promise<Array>} Array of vehicle objects with category information
  */
-const getAllVehicles = async (sortBy = 'category') => {
-    /**
-     * Build ORDER BY clause based on sortBy parameter.
-     * When sorting by category, also sort by make within each category.
-     */
-    const orderByClause = sortBy === 'make' ? 'v.make' :
-                          sortBy === 'model' ? 'v.model' :
-                          sortBy === 'year' ? 'v.year' :
-                          'c.name, v.make, v.model'; // Default sort by category name, then make, then model
-    
-    /**
-     * JOIN with categories to get category name.
-     * Using table aliases (v for vehicles, c for categories) keeps queries readable.
-     */
+const getAllVehicles = async () => {
     const query = `
         SELECT v.vehicle_id, v.make, v.model, v.year, v.price, v.mileage, v.color, v.transmission, v.fuel_type, v.drivetrain, v.vin, v.description, v.status,
                c.name as category_name
         FROM vehicles v
         JOIN categories c ON v.category_id = c.category_id
-        ORDER BY ${orderByClause}
+        ORDER BY c.name, v.make, v.model
     `;
     
     const result = await db.query(query);
@@ -99,26 +85,18 @@ const getVehicle = async (identifier, identifierType = 'id') => {
 
 /**
  * Get all vehicles in a specific category.
- * 
+ *
  * @param {number} categoryId - The ID of the category
- * @param {string} sortBy - Sort option: 'vehicle_id' (default), 'make', 'model', 'year', 'price', 'mileage'
  * @returns {Promise<Array>} Array of vehicle objects in the specified category
  */
-const getVehiclesByCategory = async (categoryId, sortBy = 'vehicle_id') => {
-    const orderByClause = sortBy === 'make' ? 'v.make' :
-                          sortBy === 'model' ? 'v.model' :
-                          sortBy === 'year' ? 'v.year' :
-                          sortBy === 'price' ? 'v.price' :
-                          sortBy === 'mileage' ? 'v.mileage' :
-                          'v.vehicle_id';
-    
+const getVehiclesByCategory = async (categoryId) => {
     const query = `
         SELECT v.vehicle_id, v.make, v.model, v.year, v.price, v.mileage, v.color, v.transmission, v.fuel_type, v.drivetrain, v.vin, v.description, v.status,
                c.name as category_name
         FROM vehicles v
         JOIN categories c ON v.category_id = c.category_id
         WHERE v.category_id = $1
-        ORDER BY ${orderByClause}
+        ORDER BY c.name, v.make, v.model
     `;
     
     const result = await db.query(query, [categoryId]);

@@ -1,14 +1,23 @@
-import { getAllVehicles, getVehicleById, getVehicleByVin } from '../../models/vehicles/vehicles.js';
+import { getAllVehicles, getVehicleById, getVehicleByVin, getVehiclesByCategory } from '../../models/vehicles/vehicles.js';
 
 // Route handler for the vehicle catalog list page
 const catalogPage = async (req, res) => {
-    const sortBy = req.query.sort || 'category';
-    const vehicles = await getAllVehicles(sortBy);
+    const categoryValue = req.query.category || 'all';
+    let vehicles = [];
+
+    if (categoryValue === 'all') {
+        vehicles = await getAllVehicles();
+    } else {
+        const categoryId = Number(categoryValue);
+        vehicles = Number.isInteger(categoryId)
+            ? await getVehiclesByCategory(categoryId)
+            : [];
+    }
 
     res.render('vehicles/list', {
         title: 'Vehicle Catalog',
         vehicles,
-        currentSort: sortBy
+        currentCategory: categoryValue
     });
 };
 
