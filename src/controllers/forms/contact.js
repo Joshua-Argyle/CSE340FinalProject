@@ -1,12 +1,29 @@
-import { Router } from 'express';
 import { validationResult } from 'express-validator';
 import { createContactForm, getAllContactForms } from '../../models/forms/contact.js';
 
 /**
  * Display the contact form page.
  */
-export const showContactForm = (req, res) => {
-    res.render('forms/contact/form', {
+export const showContactForm = async (req, res) => {
+    const roleName = req.session?.user?.roleName;
+    const isStaff = roleName === 'admin' || roleName === 'employee';
+
+    if (isStaff) {
+        let contactForms = [];
+
+        try {
+            contactForms = await getAllContactForms();
+        } catch (error) {
+            console.error('Error retrieving contact forms:', error);
+        }
+
+        return res.render('forms/contact/responses', {
+            title: 'Contact Form Submissions',
+            contactForms
+        });
+    }
+
+    return res.render('forms/contact/form', {
         title: 'Contact Us'
     });
 };
@@ -31,10 +48,13 @@ export const handleContactSubmission = async (req, res) => {
 
     // Extract validated data
     const { subject, message } = req.body;
+    const sessionUser = req.session?.user;
+    const contactName = sessionUser?.name || 'Guest User';
+    const contactEmail = sessionUser?.email || 'guest@example.com';
 
     try {
         // Save to database
-        await createContactForm(subject, message);
+        await createContactForm(contactName, contactEmail, subject, message);
         // After successfully saving to the database
         req.flash('success', 'Thank you for contacting us! We will respond soon.');
         res.redirect('/contact');

@@ -33,6 +33,16 @@
                             </div>
                             <p class="review-date"><%= new Date(review.created_at).toLocaleDateString() %></p>
                             <p><%= review.review_text %></p>
+                            <% if (isLoggedIn && currentUserId === review.user_id) { %>
+                                <p>
+                                    <a href="/catalog/<%= vehicle.vehicleId %>?editReviewId=<%= review.review_id %>">Edit Review</a>
+                                </p>
+                            <% } %>
+                            <% if (isLoggedIn && (currentUserId === review.user_id || canModerateReviews)) { %>
+                                <form action="/catalog/<%= vehicle.vehicleId %>/reviews/<%= review.review_id %>/delete" method="post">
+                                    <button type="submit">Delete Review</button>
+                                </form>
+                            <% } %>
                         </li>
                     <% }); %>
                 </ul>
@@ -41,21 +51,24 @@
             <% } %>
 
             <form action="/catalog/<%= vehicle.vehicleId %>/reviews" method="post" class="review-form">
-                <h3>Leave a Review</h3>
+                <h3><%= reviewToEdit ? 'Edit Your Review' : 'Leave a Review' %></h3>
+                <% if (reviewToEdit) { %>
+                    <input type="hidden" name="editReviewId" value="<%= reviewToEdit.review_id %>">
+                <% } %>
                 <label for="rating">Rating</label>
                 <select id="rating" name="rating" required>
                     <option value="">Select a rating</option>
-                    <option value="5">5 - Excellent</option>
-                    <option value="4">4 - Very Good</option>
-                    <option value="3">3 - Good</option>
-                    <option value="2">2 - Fair</option>
-                    <option value="1">1 - Poor</option>
+                    <option value="5" <%= reviewToEdit && Number(reviewToEdit.rating) === 5 ? 'selected' : '' %>>5 - Excellent</option>
+                    <option value="4" <%= reviewToEdit && Number(reviewToEdit.rating) === 4 ? 'selected' : '' %>>4 - Very Good</option>
+                    <option value="3" <%= reviewToEdit && Number(reviewToEdit.rating) === 3 ? 'selected' : '' %>>3 - Good</option>
+                    <option value="2" <%= reviewToEdit && Number(reviewToEdit.rating) === 2 ? 'selected' : '' %>>2 - Fair</option>
+                    <option value="1" <%= reviewToEdit && Number(reviewToEdit.rating) === 1 ? 'selected' : '' %>>1 - Poor</option>
                 </select>
 
                 <label for="reviewText">Your Review</label>
-                <textarea id="reviewText" name="reviewText" rows="4" required></textarea>
+                <textarea id="reviewText" name="reviewText" rows="4" required><%= reviewToEdit ? reviewToEdit.review_text : '' %></textarea>
 
-                <button type="submit">Submit Review</button>
+                <button type="submit"><%= reviewToEdit ? 'Save Updated Review' : 'Submit Review' %></button>
             </form>
         </section>
 

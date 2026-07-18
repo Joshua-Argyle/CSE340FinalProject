@@ -2,12 +2,18 @@
 <main>
     <h1>Service Requests</h1>
 
+    <% if (isCustomer) { %>
+        <p><a href="/service-request">New Service Request</a></p>
+    <% } %>
+
     <% if (serviceRequestForms && serviceRequestForms.length > 0) { %>
         <div class="service-request-responses">
             <% serviceRequestForms.forEach(form => { %>
                 <div class="response-item">
                     <h2>Request #<%= form.service_request_id %></h2>
-                    <p><strong>Customer:</strong> <%= form.customerName %> (<%= form.customerEmail %>)</p>
+                    <% if (!isCustomer) { %>
+                        <p><strong>Customer:</strong> <%= form.customerName %> (<%= form.customerEmail %>)</p>
+                    <% } %>
                     <p><strong>VIN:</strong> <%= form.vin %></p>
                     <p><strong>Make:</strong> <%= form.make %></p>
                     <p><strong>Model:</strong> <%= form.model %></p>
@@ -16,7 +22,25 @@
                     <p><strong>Description:</strong></p>
                     <p class="response-description"><%= form.description %></p>
                     <p><strong>Status:</strong> <%= form.status %></p>
+                    <p><strong>Employee Note:</strong> <%= form.employee_notes || 'None' %></p>
                     <p class="response-date">Submitted: <%= new Date(form.created_at).toLocaleDateString() %></p>
+
+                    <% if (canManageServiceRequests) { %>
+                        <form action="/service-request/responses/<%= form.service_request_id %>/update" method="post">
+                            <label for="status_<%= form.service_request_id %>"><strong>Update Status</strong></label>
+                            <select id="status_<%= form.service_request_id %>" name="status" required>
+                                <option value="pending" <%= form.status === 'pending' ? 'selected' : '' %>>pending</option>
+                                <option value="in progress" <%= form.status === 'in progress' ? 'selected' : '' %>>in progress</option>
+                                <option value="completed" <%= form.status === 'completed' ? 'selected' : '' %>>completed</option>
+                                <option value="cancelled" <%= form.status === 'cancelled' ? 'selected' : '' %>>cancelled</option>
+                            </select>
+
+                            <label for="employeeNotes_<%= form.service_request_id %>"><strong>Employee Note</strong></label>
+                            <textarea id="employeeNotes_<%= form.service_request_id %>" name="employeeNotes" rows="3" placeholder="Add or update employee note"><%= form.employee_notes || '' %></textarea>
+
+                            <button type="submit">Save Request Update</button>
+                        </form>
+                    <% } %>
                 </div>
             <% }); %>
         </div>

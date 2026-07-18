@@ -1,6 +1,27 @@
 <%- include('partials/header') %>
 <main>
-    <h1>Home</h1>
-    <p>Welcome to my final Project Site!</p>
-    </main>
+    <section class="featured-vehicle">
+        <h1>Featured Vehicle</h1>
+
+        <% if (featuredVehicle) { %>
+            <% if (featuredVehicle.imageUrl) { %>
+                <img src="<%= featuredVehicle.imageUrl %>" alt="<%= featuredVehicle.imageDescription || (featuredVehicle.make + ' ' + featuredVehicle.model) %>">
+            <% } %>
+            <h2><%= featuredVehicle.year %> <%= featuredVehicle.make %> <%= featuredVehicle.model %></h2>
+            <p>$<%= Number(featuredVehicle.price).toLocaleString() %></p>
+            <p><a href="/catalog/<%= featuredVehicle.vin %>">View Featured Vehicle Details</a></p>
+        <% } else { %>
+            <p>No featured vehicle is available right now.</p>
+        <% } %>
+
+        <p><a href="/catalog">See All Cars</a></p>
+        <p><a href="/contact">Contact Us</a></p>
+    </section>
+
+    <section class="service-cta">
+        <h2>We Service Vehicles Too</h2>
+        <p>Need maintenance or repairs? Our team can help.</p>
+        <p><a href="/service-request">Start a Service Request Now</a></p>
+    </section>
+</main>
 <%- include('partials/footer') %>

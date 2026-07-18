@@ -1,0 +1,11 @@
+main:has(.contact-form) {
+	max-width: 820px;
+}
+
+.contact-form {
+	margin-top: 1rem;
+}
+
+.contact-form textarea {
+	min-height: 190px;
+}

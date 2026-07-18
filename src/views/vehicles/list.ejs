@@ -15,10 +15,9 @@
             <label for="category">Filter by category</label>
             <select id="category" name="category" onchange="location.href = '?category=' + this.value">
                 <option value="all" <%= currentCategory === 'all' ? 'selected' : '' %>>All Vehicles</option>
-                <option value="1" <%= currentCategory === '1' ? 'selected' : '' %>>Sedan</option>
-                <option value="2" <%= currentCategory === '2' ? 'selected' : '' %>>SUV</option>
-                <option value="3" <%= currentCategory === '3' ? 'selected' : '' %>>Truck</option>
-                <option value="4" <%= currentCategory === '4' ? 'selected' : '' %>>Van</option>
+                <% categories.forEach(category => { %>
+                    <option value="<%= category.categoryId %>" <%= currentCategory === String(category.categoryId) ? 'selected' : '' %>><%= category.name %></option>
+                <% }); %>
             </select>
         </div>
     </section>
@@ -27,6 +26,13 @@
         <% if (vehicles && vehicles.length > 0) { %>
             <% vehicles.forEach(vehicle => { %>
                 <article class="vehicle-card">
+                    <div class="vehicle-card__image">
+                        <% if (vehicle.imageUrl) { %>
+                            <img src="<%= vehicle.imageUrl %>" alt="<%= vehicle.imageDescription || (vehicle.make + ' ' + vehicle.model) %>">
+                        <% } else { %>
+                            <div class="vehicle-card__image-placeholder">No image available</div>
+                        <% } %>
+                    </div>
                     <div class="vehicle-card__header">
                         <h2><%= vehicle.make %> <%= vehicle.model %></h2>
                         <span class="vehicle-card__year"><%= vehicle.year %></span>

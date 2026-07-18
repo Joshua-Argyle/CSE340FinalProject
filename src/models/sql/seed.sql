@@ -68,7 +68,8 @@ INSERT INTO categories (category_id, name) VALUES
     (12, 'hybrid'),
     (13, 'luxury'),
     (14, 'sports-car'),
-    (15, 'commercial')
+    (15, 'commercial'),
+    (16, 'car')
 ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO vehicles (
@@ -267,6 +268,21 @@ INSERT INTO vehicles (
     'available'
 );
 
+-- Insert vehicle images matched to seeded vehicles
+INSERT INTO vehicle_images (vehicle_id, image_url, image_description) VALUES
+    (1, '/images/vehicles/camry.jpg', 'Toyota Camry SE exterior view'),
+    (2, '/images/vehicles/crV.jpg', 'Honda CR-V EX-L exterior view'),
+    (3, '/images/vehicles/f150.jpg', 'Ford F-150 XLT exterior view'),
+    (4, '/images/vehicles/model3Tesla.jpg', 'Tesla Model 3 Long Range exterior view'),
+    (5, '/images/vehicles/outback.jpg', 'Subaru Outback Premium exterior view'),
+    (6, '/images/vehicles/sienna.png', 'Toyota Sienna XLE exterior view'),
+    (7, '/images/vehicles/wrangler.png', 'Jeep Wrangler Sport 4-Door exterior view'),
+    (8, '/images/vehicles/mx5.jpg', 'Mazda MX-5 Miata Club exterior view'),
+    (9, '/images/vehicles/gti.jpg', 'Volkswagen Golf GTI S exterior view'),
+    (10, '/images/vehicles/c300.jpg', 'Mercedes-Benz C-Class C 300 exterior view'),
+    (11, '/images/vehicles/cargoVan.jpg', 'Ford Transit Cargo Van exterior view'),
+    (12, '/images/vehicles/prius.jpg', 'Toyota Prius XLE exterior view');
+
 -- Contact form table
 CREATE TABLE IF NOT EXISTS contact_messages (
     contact_message_id SERIAL PRIMARY KEY,
@@ -309,6 +325,7 @@ END $$;
 INSERT INTO roles (role_name, role_description) 
 VALUES 
     ('user', 'Standard user with basic access'),
+    ('employee', 'Employee user with restricted access'),
     ('admin', 'Administrator with full system access')
 ON CONFLICT (role_name) DO NOTHING;
 
@@ -336,6 +353,26 @@ BEGIN
         UPDATE users 
         SET role_id = user_role_id 
         WHERE role_id IS NULL;
+    END IF;
+END $$;
+
+-- Seed admin account (email: admin123@gmail.com, password: P@$$w0rd!)
+DO $$
+DECLARE
+    admin_role_id INTEGER;
+BEGIN
+    SELECT id INTO admin_role_id FROM roles WHERE role_name = 'admin';
+
+    IF admin_role_id IS NOT NULL THEN
+        INSERT INTO users (name, email, password, role_id)
+        VALUES (
+            'The Boss',
+            'admin123@gmail.com',
+            '$2b$10$drRSUNSXVUaSWnVyYQP9duNW23WQ5zsQe5OOiBAhhK7MIscLzM7Dm',
+            admin_role_id
+        )
+        ON CONFLICT (email) DO UPDATE
+        SET role_id = EXCLUDED.role_id;
     END IF;
 END $$;
 
@@ -371,6 +408,7 @@ CREATE TABLE service_requests (
         ON DELETE SET NULL,
     service_type VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
+    employee_notes TEXT,
     status VARCHAR(50) DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

@@ -1,0 +1,27 @@
+main:has(.registration-form) {
+	max-width: 760px;
+}
+
+.registration-form {
+	margin-top: 1rem;
+}
+
+.registration-form .help-text {
+	margin-top: 0.3rem;
+	color: #5f6131;
+	font-weight: 700;
+	font-size: 0.95rem;
+}
+
+main form[action*='/edit'] {
+	max-width: 680px;
+}
+
+main form[action*='/edit'] > div {
+	margin-bottom: 0.65rem;
+}
+
+main form[action*='/edit'] a {
+	margin-left: 0.55rem;
+	font-weight: 700;
+}

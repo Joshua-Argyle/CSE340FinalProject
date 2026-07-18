@@ -69,8 +69,10 @@ const getAllServiceRequests = async () => {
             sr.service_request_id,
             sr.service_type,
             sr.description,
+            sr.employee_notes,
             sr.status,
             sr.created_at,
+            sr.updated_at,
             cv.customer_vehicle_id,
             cv.vin,
             cv.make,
@@ -92,4 +94,51 @@ const getAllServiceRequests = async () => {
     return result.rows;
 };
 
-export { createServiceRequest, getAllServiceRequests };
+const getServiceRequestsByUserId = async (userId) => {
+    const query = `
+        SELECT
+            sr.service_request_id,
+            sr.service_type,
+            sr.description,
+            sr.employee_notes,
+            sr.status,
+            sr.created_at,
+            sr.updated_at,
+            cv.customer_vehicle_id,
+            cv.vin,
+            cv.make,
+            cv.model,
+            cv.year,
+            u.user_id,
+            u.name AS "customerName",
+            u.email AS "customerEmail"
+        FROM service_requests AS sr
+        INNER JOIN customer_vehicles AS cv
+            ON sr.customer_vehicle_id = cv.customer_vehicle_id
+        INNER JOIN users AS u
+            ON sr.user_id = u.user_id
+        WHERE sr.user_id = $1
+        ORDER BY sr.created_at DESC
+    `;
+
+    const result = await db.query(query, [userId]);
+
+    return result.rows;
+};
+
+const updateServiceRequestById = async (serviceRequestId, status, employeeNotes) => {
+    const query = `
+        UPDATE service_requests
+        SET
+            status = $2,
+            employee_notes = $3,
+            updated_at = CURRENT_TIMESTAMP
+        WHERE service_request_id = $1
+        RETURNING *
+    `;
+
+    const result = await db.query(query, [serviceRequestId, status, employeeNotes || null]);
+    return result.rows[0] || null;
+};
+
+export { createServiceRequest, getAllServiceRequests, getServiceRequestsByUserId, updateServiceRequestById };

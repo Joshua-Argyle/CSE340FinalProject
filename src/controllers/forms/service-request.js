@@ -1,5 +1,5 @@
 import { validationResult } from 'express-validator';
-import { createServiceRequest, getAllServiceRequests } from '../../models/forms/service-request.js';
+import { createServiceRequest, getAllServiceRequests, getServiceRequestsByUserId, updateServiceRequestById } from '../../models/forms/service-request.js';
 
 /**
  * Display the service request form page.
@@ -51,15 +51,59 @@ export const handleServiceRequestSubmission = async (req, res) => {
  */
 export const showServiceRequestResponses = async (req, res) => {
     let serviceRequestForms = [];
+    const userId = req.session?.user?.user_id;
+    const roleName = req.session?.user?.roleName;
+    const canManageServiceRequests = roleName === 'admin' || roleName === 'employee';
+    const isCustomer = roleName === 'user';
 
     try {
-        serviceRequestForms = await getAllServiceRequests();
+        serviceRequestForms = canManageServiceRequests
+            ? await getAllServiceRequests()
+            : await getServiceRequestsByUserId(userId);
     } catch (error) {
         console.error('Error retrieving service request forms:', error);
     }
 
     res.render('forms/service-request/responses', {
         title: 'Service Request Form Submissions',
-        serviceRequestForms
+        serviceRequestForms,
+        canManageServiceRequests,
+        isCustomer
     });
+};
+
+export const handleServiceRequestUpdate = async (req, res) => {
+    const errors = validationResult(req);
+    const roleName = req.session?.user?.roleName;
+
+    if (roleName !== 'admin' && roleName !== 'employee') {
+        req.flash('error', 'Only employees and admins can update service requests.');
+        return res.redirect('/service-request/responses');
+    }
+
+    if (!errors.isEmpty()) {
+        errors.array().forEach(error => {
+            req.flash('error', error.msg);
+        });
+        return res.redirect('/service-request/responses');
+    }
+
+    try {
+        const serviceRequestId = Number(req.params.serviceRequestId);
+        const { status, employeeNotes } = req.body;
+
+        const updatedRequest = await updateServiceRequestById(serviceRequestId, status, employeeNotes);
+        if (!updatedRequest) {
+            req.flash('error', 'Service request not found.');
+            return res.redirect('/service-request/responses');
+        }
+
+        req.flash('success', `Service request #${updatedRequest.service_request_id} updated.`);
+        return res.redirect('/service-request/responses');
+    } catch (error) {
+        console.error('Error updating service request:', error.message);
+        console.error(error.stack);
+        req.flash('error', 'Unable to update service request. Please try again later.');
+        return res.redirect('/service-request/responses');
+    }
 };

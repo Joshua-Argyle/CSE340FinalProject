@@ -60,6 +60,9 @@ const addLocalVariables = (req, res, next) => {
     // Make req.query available to all templates
     res.locals.queryParams = { ...req.query };
 
+    // Expose logged-in user object to templates for role-aware UI.
+    res.locals.user = req.session && req.session.user ? req.session.user : null;
+
     // Randomly assign a theme class to the body
     const themes = ['blue-theme', 'green-theme', 'red-theme'];
     const randomTheme = themes[Math.floor(Math.random() * themes.length)];

@@ -1,10 +1,9 @@
 // Route handlers for static pages
 const homePage = (req, res) => {
-    res.render('home', { title: 'Home' });
-};
-
-const aboutPage = (req, res) => {
-    res.render('about', { title: 'About' });
+    res.render('home', {
+        title: 'Home',
+        featuredVehicle: res.locals.featuredVehicle || null
+    });
 };
 
 const testErrorPage = (req, res, next) => {
@@ -13,4 +12,4 @@ const testErrorPage = (req, res, next) => {
     next(err);
 };
 
-export { homePage, aboutPage, testErrorPage };
+export { homePage, testErrorPage };

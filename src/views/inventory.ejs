@@ -1,0 +1,139 @@
+<%- include('partials/header') %>
+<main>
+    <section class="inventory-header">
+        <h1>Inventory Management</h1>
+        <p>Signed in as <strong><%= user.name %></strong> (<%= user.roleName %>)</p>
+        <% if (isAdmin) { %>
+            <p><a href="/inventory/vehicles/new">Create a Vehicle</a></p>
+        <% } %>
+    </section>
+
+    <% if (isAdmin) { %>
+        <section class="inventory-section inventory-section--categories">
+            <div class="inventory-section__header">
+                <h2>Vehicle Categories</h2>
+                <p>Create, edit, and delete categories here. Deleting a category moves its vehicles into the default <strong>car</strong> category.</p>
+            </div>
+
+            <article class="inventory-card inventory-card--create-category">
+                <h3>Create Category</h3>
+                <form action="/inventory/categories" method="post">
+                    <label for="category_name">Category Name</label>
+                    <input id="category_name" type="text" name="category_name" required>
+                    <button type="submit">Create Category</button>
+                </form>
+            </article>
+
+            <div class="inventory-card-grid">
+                <% if (categories && categories.length > 0) { %>
+                    <% categories.forEach(category => { %>
+                        <article class="inventory-card">
+                            <h3><%= category.name %></h3>
+                            <p><strong>Category ID:</strong> <%= category.categoryId %></p>
+                            <p><strong>Vehicles:</strong> <%= category.vehicleCount %></p>
+
+                            <form action="/inventory/categories/<%= category.categoryId %>/delete" method="post">
+                                <button type="submit" <%= category.name === 'car' ? 'disabled' : '' %>>Delete Category</button>
+                            </form>
+                        </article>
+                    <% }); %>
+                <% } else { %>
+                    <p>No categories found.</p>
+                <% } %>
+            </div>
+        </section>
+    <% } %>
+
+    <section class="inventory-section inventory-section--vehicles">
+        <div class="inventory-section__header">
+            <h2>Vehicles</h2>
+        </div>
+    <section class="vehicle-grid">
+        <% if (vehicles && vehicles.length > 0) { %>
+            <% vehicles.forEach(vehicle => { %>
+                <article class="vehicle-card">
+                    <h2><%= vehicle.year %> <%= vehicle.make %> <%= vehicle.model %></h2>
+                    <p><a href="/catalog/<%= vehicle.vehicleId %>">View Vehicle Details</a></p>
+                    <p><strong>VIN:</strong> <%= vehicle.vin %></p>
+                    <p><strong>Category:</strong> <%= vehicle.categoryName %></p>
+                    <p><strong>Price:</strong> $<%= Number(vehicle.price).toLocaleString() %></p>
+                    <p><strong>Mileage:</strong> <%= Number(vehicle.mileage).toLocaleString() %></p>
+                    <p><strong>Status:</strong> <%= vehicle.status %></p>
+                    <details>
+                        <summary>Edit Vehicle</summary>
+                        <form action="/inventory/vehicles/<%= vehicle.vehicleId %>/edit" method="post">
+                            <input type="hidden" name="editVehicleId" value="<%= vehicle.vehicleId %>">
+
+                            <% if (isAdmin) { %>
+                                <label>Category</label>
+                                <select name="category_id" required>
+                                    <% categories.forEach(category => { %>
+                                        <option value="<%= category.categoryId %>" <%= Number(vehicle.categoryId) === Number(category.categoryId) ? 'selected' : '' %>><%= category.name %></option>
+                                    <% }); %>
+                                </select>
+
+                                <label>Make</label>
+                                <input type="text" name="make" value="<%= vehicle.make %>" required>
+
+                                <label>Model</label>
+                                <input type="text" name="model" value="<%= vehicle.model %>" required>
+
+                                <label>Year</label>
+                                <input type="number" name="year" value="<%= vehicle.year %>" required>
+
+                                <label>Mileage</label>
+                                <input type="number" name="mileage" value="<%= vehicle.mileage %>" required>
+
+                                <label>Color</label>
+                                <input type="text" name="color" value="<%= vehicle.color || '' %>" required>
+
+                                <label>Transmission</label>
+                                <input type="text" name="transmission" value="<%= vehicle.transmission || '' %>" required>
+
+                                <label>Fuel Type</label>
+                                <input type="text" name="fuel_type" value="<%= vehicle.fuelType || '' %>" required>
+
+                                <label>Drivetrain</label>
+                                <input type="text" name="drivetrain" value="<%= vehicle.drivetrain || '' %>" required>
+
+                                <label>VIN</label>
+                                <input type="text" name="vin" value="<%= vehicle.vin %>" required>
+                            <% } %>
+
+                            <label>Price</label>
+                            <input type="number" name="price" step="0.01" value="<%= vehicle.price %>" required>
+
+                            <label>Description</label>
+                            <textarea name="description" rows="3" required><%= vehicle.description %></textarea>
+
+                            <label>Image URL</label>
+                            <input type="text" name="image_url" value="<%= vehicle.imageUrl || '' %>" required>
+
+                            <label>Image Description</label>
+                            <textarea name="image_description" rows="2" required><%= vehicle.imageDescription || '' %></textarea>
+
+                            <label>Status</label>
+                            <select name="status" required>
+                                <option value="available" <%= vehicle.status === 'available' ? 'selected' : '' %>>available</option>
+                                <option value="pending" <%= vehicle.status === 'pending' ? 'selected' : '' %>>pending</option>
+                                <option value="sold" <%= vehicle.status === 'sold' ? 'selected' : '' %>>sold</option>
+                            </select>
+
+                            <button type="submit">Save Vehicle Changes</button>
+                        </form>
+                    </details>
+
+                    <% if (isAdmin) { %>
+                        <form action="/inventory/vehicles/<%= vehicle.vehicleId %>/delete" method="post">
+                            <button type="submit">Delete Vehicle</button>
+                        </form>
+                    <% } %>
+                </article>
+            <% }); %>
+        <% } else { %>
+            <p>No vehicles found.</p>
+        <% } %>
+    </section>
+    </section>
+</main>
+<%- include('partials/footer') %>

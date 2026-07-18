@@ -6,11 +6,34 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+const ensureServiceRequestColumns = async () => {
+    await db.query(`
+        DO $$
+        BEGIN
+            IF to_regclass('public.service_requests') IS NOT NULL THEN
+                IF NOT EXISTS (
+                    SELECT 1
+                    FROM information_schema.columns
+                    WHERE table_schema = 'public'
+                      AND table_name = 'service_requests'
+                      AND column_name = 'employee_notes'
+                ) THEN
+                    ALTER TABLE service_requests ADD COLUMN employee_notes TEXT;
+                END IF;
+            END IF;
+        END
+        $$;
+    `);
+};
+
 /**
  * Sets up the database by running the seed.sql file if needed.
  * Checks if faculty table has data - if not, runs a full re-seed.
  */
 const setupDatabase = async () => {
+    // Keep existing databases compatible with newer service request features.
+    await ensureServiceRequestColumns();
+
     /**
      * Check if faculty table has any rows and wrap in try-catch to handle cases
      * where table doesn't exist yet.
@@ -29,10 +52,10 @@ const setupDatabase = async () => {
         hasData = false;
     }
     
-    // if (hasData) {
-    //     console.log('Database already seeded');
-    //     return true;
-    // }
+    if (hasData) {
+        console.log('Database already seeded');
+        return true;
+    }
     
     // No faculty found - run full seed
     console.log('Seeding database...');

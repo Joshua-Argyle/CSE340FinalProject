@@ -1,0 +1,37 @@
+main:has(.service-request-form),
+main:has(.service-request-responses) {
+	max-width: 920px;
+}
+
+.service-request-form {
+	margin-top: 1rem;
+}
+
+.service-request-responses {
+	display: grid;
+	gap: 1rem;
+	margin-top: 1rem;
+}
+
+.response-item h2 {
+	margin-bottom: 0.4rem;
+}
+
+.response-description {
+	padding: 0.55rem 0.75rem;
+	border-radius: 10px;
+	border: 1px solid rgba(122, 81, 51, 0.26);
+	background: rgba(255, 255, 255, 0.7);
+}
+
+.response-date {
+	font-style: italic;
+	opacity: 0.8;
+}
+
+.no-responses {
+	padding: 1rem;
+	border-radius: 12px;
+	background: rgba(79, 157, 152, 0.13);
+	border: 1px solid rgba(47, 127, 120, 0.3);
+}

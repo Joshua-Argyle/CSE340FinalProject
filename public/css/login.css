@@ -1,0 +1,17 @@
+main:has(.login-form) {
+	max-width: 680px;
+}
+
+.login-form {
+	margin-top: 1rem;
+}
+
+.login-form .form-group {
+	margin-bottom: 0.7rem;
+}
+
+.form-footer {
+	margin-top: 0.9rem;
+	padding-top: 0.7rem;
+	border-top: 1px dashed rgba(122, 81, 51, 0.4);
+}

@@ -1,6 +1,5 @@
 import { findUserByEmail, verifyPassword } from '../../models/forms/login.js';
 import { validationResult } from 'express-validator';
-import { Router } from 'express';
 
 /**
  * Display the login form.
@@ -51,8 +50,8 @@ export const processLogin = async (req, res) => {
         // TODO: Store user in session: req.session.user = user
         req.session.user = user;
         req.flash('success', 'You have been logged in successfully.');
-        // TODO: Redirect to /dashboard
-        return res.redirect('/dashboard');
+        // TODO: Redirect to /inventory
+        return res.redirect('/inventory');
     } catch (error) {
         // Model functions do not catch errors, so handle them here
         // TODO: Log error to console
@@ -106,31 +105,4 @@ const processLogout = (req, res) => {
     });
 };
 
-/**
- * Display protected dashboard (requires login).
- */
-const showDashboard = (req, res) => {
-    const user = req.session.user;
-    const sessionData = req.session;
-
-    // Security check! Ensure user and sessionData do not contain password field
-    if (user && user.password) {
-        console.error('Security error: password found in user object');
-        delete user.password;
-    }
-    if (sessionData.user && sessionData.user.password) {
-        console.error('Security error: password found in sessionData.user');
-        delete sessionData.user.password;
-    }
-
-    // TODO: Render the dashboard view (dashboard)
-    // TODO: Pass title: 'Dashboard', user, and sessionData to template
-    res.render('dashboard', {
-        title: 'Dashboard',
-        user,
-        sessionData
-    });
-};
-
-// Export router as default, and specific functions for root-level routes
-export { processLogout, showDashboard };
+export { processLogout };

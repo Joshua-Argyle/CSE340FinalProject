@@ -26,6 +26,8 @@ const displayAllReviewsForCar = async (vehicleId) => {
 
     const query = `
         SELECT 
+            r.review_id,
+            r.user_id,
             r.rating,
             u.name,
             r.created_at,
@@ -47,7 +49,36 @@ const displayAllReviewsForCar = async (vehicleId) => {
 
 };
 
+const deleteReviews = async (reviewId, userId = null) => {
+    const query = userId
+        ? `
+            DELETE FROM reviews
+            WHERE review_id = $1 AND user_id = $2
+            RETURNING *;
+        `
+        : `
+            DELETE FROM reviews
+            WHERE review_id = $1
+            RETURNING *;
+        `;
+    const params = userId ? [reviewId, userId] : [reviewId];
+    const result = await db.query(query, params);
+    return result.rows[0] || null;
+};
+
+const getReviewForEdit = async (reviewId, userId) => {
+    const query = `
+        SELECT review_id, user_id, vehicle_id, rating, review_text
+        FROM reviews
+        WHERE review_id = $1 AND user_id = $2;
+    `;
+    const result = await db.query(query, [reviewId, userId]);
+    return result.rows[0] || null;
+};
+
 export { 
     createReview,
-    displayAllReviewsForCar
+    deleteReviews,
+    displayAllReviewsForCar,
+    getReviewForEdit
 };
