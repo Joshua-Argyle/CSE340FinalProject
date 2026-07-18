@@ -18,12 +18,18 @@ import flash from './src/middleware/flash.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const NODE_ENV = process.env.NODE_ENV?.toLowerCase() || 'production';
+const isProduction = NODE_ENV.includes('prod');
 const PORT = process.env.PORT || 3000;
 
 /**
  * Setup Express Server
  */
 const app = express();
+
+// In production, trust the first proxy so secure cookies work behind TLS-terminating hosts.
+if (isProduction) {
+    app.set('trust proxy', 1);
+}
 
 // Initialize PostgreSQL session store
 const pgSession = connectPgSimple(session);
@@ -44,10 +50,12 @@ app.use(session({
         createTableIfMissing: true
     }),
     secret: process.env.SESSION_SECRET,
+    proxy: isProduction,
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: NODE_ENV.includes('dev') !== true,
+        secure: isProduction,
+        sameSite: 'lax',
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000
     }
