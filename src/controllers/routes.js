@@ -91,7 +91,7 @@ router.get('/contact', showContactForm);
 router.get('/contact/responses', showContactResponses);
 router.post('/contact', contactValidation, handleContactSubmission);
 
-router.get('/service-request', showServiceRequestForm);
+router.get('/service-request', requireLogin, showServiceRequestForm);
 router.get('/service-request/responses', requireLogin, showServiceRequestResponses);
 router.post('/service-request', requireLogin, serviceRequestValidation, handleServiceRequestSubmission);
 router.post('/service-request/responses/:serviceRequestId/update', requireLogin, serviceRequestUpdateValidation, handleServiceRequestUpdate);

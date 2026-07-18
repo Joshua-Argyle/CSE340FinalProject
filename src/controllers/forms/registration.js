@@ -37,7 +37,7 @@ export const processRegistration = async (req, res) => {
         errors.array().forEach(error => {
             req.flash('error', error.msg);
         });
-        return res.redirect('/contact');
+        return res.redirect('/register');
     }
 
     // Extract validated data from request body
